@@ -18,7 +18,13 @@ generate_data = true;
 window_flag = true;
 
 % VISUALIZATION
-visualization_flag = false;
+visualization_flag = true;
+
+% DATA CONSTANT SETTINGS
+samples = 64;
+antennas = 24;
+n = samples*antennas;
+sampling_freq = 1000;
 
 %% LOAD DATA
 
@@ -31,7 +37,7 @@ if ~generate_data
 %raw_data = load('data/Example_1c.mat');
 %raw_data = load('data/Example_1d.mat');
 % Task 2
-%raw_data = load('data/Example_2a_target_in_clutter.mat');
+raw_data = load('data/Example_2a_target_in_clutter.mat');
 %raw_data = load('data/Example_2b_target_in_clutter.mat');
 % Task 3
 %raw_data = load('data/Example_3_two_targets.mat');
@@ -41,21 +47,15 @@ clear raw_data;
 else
 % GEN DATA
 
-% DATA CONSTANT SETTINGS
-samples = 64;
-antennas = 24;
-n = samples*antennas;
-sampling_freq = 1000;
-
 % TARGETS
 linear_freq = true; % Otherwise velocity and az angle.
 
 % TARGET 1
 target1_amp_dB = 0;
 if linear_freq
-    target1_freq = (50 + 400*rand) * (randi(2) - 1.5)*2; % +-500 != 0.
+    target1_freq = 500/32*6.3; % +-500 != 0.
     target1_vel = doppler_freq_to_velocity(target1_freq, carrier_freq);
-    target1_angle = 70*(rand - 0.5)*2; % +-90
+    target1_angle = 90/12*5.2; % +-90
 else
     velocity = 15; % +-57.6923 != 0.
     target1_freq = velocity_to_doppler_freq(velocity, carrier_freq);
@@ -67,8 +67,8 @@ end
 multiple_targets_flag = false;
 target2_amp_dB = 0;
 if linear_freq
-    target2_freq = 28.84; % +-500 != 0.
-    target2_angle = 45; % +-90
+    target2_freq = 500/32*5; % +-500 != 0.
+    target2_angle = 90/12*7; % +-90
 else
     velocity = -30; % +-57.6923 != 0.
     target2_freq = velocity_to_doppler_freq(velocity, carrier_freq);
@@ -87,7 +87,7 @@ noise_amp_bin_dB = -50;
 
 % CLUTTER
 clutter_flag = false;
-clutter_amp_full_BW_dB = 20; % Energy get smudged over angle BW
+clutter_amp_full_BW_dB = 10; % Energy get smudged over angle BW
 clutter_freq = 1000/64; % 1000/64 to 1000/64*3 Hz is ok.
 clutter_angle_centre = 90/12*6; % +- 90
 clutter_angle_bw = (180/24)*180; % BLACK MAGIC - MAX ??? (180/24)*180
@@ -257,7 +257,7 @@ else
         % Convert to freq, then convert to velocity and angle
         vel_freq_centre_bin = bin_to_freq(rIdx, samples, PRF)
         ang_freq_centre_bin = bin_to_freq(cIdx, antennas, 180)
-
+        
         vel_freq_lagrange_1d = bin_to_freq(lagrange_1d_pointMax(1), samples, PRF)
         ang_freq_lagrange_1d = bin_to_freq(lagrange_1d_pointMax(2), antennas, 180)
 
